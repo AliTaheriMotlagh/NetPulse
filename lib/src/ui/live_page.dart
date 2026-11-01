@@ -36,7 +36,7 @@ class _LivePageState extends State<LivePage> {
               child: ListTile(leading: const Icon(Icons.error_outline_rounded), title: Text(m.error!)),
             ),
           TileGrid(
-            minWidth: 220,
+            minWidth: 160,
             children: [
               StatTile(
                 icon: Icons.arrow_downward_rounded,

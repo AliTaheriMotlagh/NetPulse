@@ -34,11 +34,16 @@ class _ShellState extends State<Shell> {
   @override
   Widget build(BuildContext context) {
     final m = widget.m;
-    final page = switch (_index) {
-      0 => LivePage(m),
-      1 => AppsPage(m),
-      2 => InterfacesPage(m),
-      3 => SessionsPage(m),
+    // The Apps tab only exists where the OS can report per-app traffic.
+    final dests = [
+      for (final d in _dests)
+        if (d.$1 != 'Apps' || m.appSource != null) d,
+    ];
+    final page = switch (dests[_index].$1) {
+      'Live' => LivePage(m),
+      'Apps' => AppsPage(m),
+      'Interfaces' => InterfacesPage(m),
+      'Sessions' => SessionsPage(m),
       _ => SettingsPage(m),
     };
     return LayoutBuilder(
@@ -57,7 +62,7 @@ class _ShellState extends State<Shell> {
           child: Focus(
             autofocus: true,
             child: Scaffold(
-              appBar: AppBar(title: Text(_index == 0 ? 'NetPulse' : _dests[_index].$1)),
+              appBar: AppBar(title: Text(_index == 0 ? 'NetPulse' : dests[_index].$1)),
               body: wide
                   ? Row(
                       children: [
@@ -67,7 +72,7 @@ class _ShellState extends State<Shell> {
                           selectedIndex: _index,
                           onDestinationSelected: (i) => setState(() => _index = i),
                           destinations: [
-                            for (final d in _dests)
+                            for (final d in dests)
                               NavigationRailDestination(icon: Icon(d.$2), selectedIcon: Icon(d.$3), label: Text(d.$1)),
                           ],
                         ),
@@ -82,7 +87,7 @@ class _ShellState extends State<Shell> {
                       selectedIndex: _index,
                       onDestinationSelected: (i) => setState(() => _index = i),
                       destinations: [
-                        for (final d in _dests)
+                        for (final d in dests)
                           NavigationDestination(icon: Icon(d.$2), selectedIcon: Icon(d.$3), label: d.$1),
                       ],
                     ),
